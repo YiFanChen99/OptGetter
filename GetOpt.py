@@ -11,7 +11,7 @@ class OptGetter(object):
 
         self.options = options
         self.long_options = long_options if long_options is not None else []
-        self.help_massage = kwargs.get('help_massage', 'options: %s' % options)
+        self.help_message = kwargs.get('help_message', 'options: %s' % options)
         # self.kwargs = kwargs  # For extending
 
     def get(self, argv, options_in_dict=False):
@@ -25,7 +25,7 @@ class OptGetter(object):
 
         for key, value in options:
             if key == '-h':
-                print self.help_massage
+                print self.help_message
                 sys.exit()
 
         if options_in_dict:
@@ -34,4 +34,4 @@ class OptGetter(object):
         return options, arguments
 
     def show_parameter_invalid(self):
-        print "Invalid parameters. \n", self.help_massage, "\n"
+        print "Invalid parameters. \n", self.help_message, "\n"
