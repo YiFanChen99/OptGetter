@@ -1,7 +1,14 @@
 #!/usr/bin/python
 
-import sys
 import getopt
+
+
+class OptInvalidError(Exception):
+    pass
+
+
+class OptHelpError(Exception):
+    pass
 
 
 class OptGetter(object):
@@ -19,19 +26,15 @@ class OptGetter(object):
 
         try:
             options, arguments = getopt.getopt(argv, self.options, self.long_options)
-        except getopt.GetoptError:
-            self.show_parameter_invalid()
-            sys.exit(2)
+        except getopt.GetoptError as e:
+            raise OptInvalidError("Invalid parameters. %s" % str(e))
 
         for key, value in options:
             if key == '-h':
-                print self.help_message
-                sys.exit()
+                raise OptHelpError(self.help_message)
 
         if options_in_dict:
             options = dict(options)
 
         return options, arguments
 
-    def show_parameter_invalid(self):
-        print "Invalid parameters. \n", self.help_message, "\n"
