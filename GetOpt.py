@@ -40,20 +40,20 @@ class OptGetter(object):
         return options, arguments
 
 
-class MyTestOptGetter(OptGetter):
+class _MyTestOptGetter(OptGetter):
     options = "hf:o:r"
     help_message = "usage: Getter [-h] [-f F_PARAM] [-o O_PARAM] [-r]"
 
     def __init__(self):
-        options = MyTestOptGetter.options
-        help_message = MyTestOptGetter.help_message
-        super(MyTestOptGetter, self).__init__(options=options, help_message=help_message)
+        options = _MyTestOptGetter.options
+        help_message = _MyTestOptGetter.help_message
+        super(_MyTestOptGetter, self).__init__(options=options, help_message=help_message)
 
 
-class OptGetterTest(unittest.TestCase):
+class _OptGetterTest(unittest.TestCase):
 
     def setUp(self):
-        self.getter = MyTestOptGetter()
+        self.getter = _MyTestOptGetter()
 
     def tearDown(self):
         self.getter = None
@@ -87,7 +87,7 @@ class OptGetterTest(unittest.TestCase):
         """
         The error message from OptHelpError is the help_message.
         """
-        defined_message = MyTestOptGetter.help_message
+        defined_message = _MyTestOptGetter.help_message
         with self.assertRaises(OptHelpError) as help_error:
             argv = "-h".split(' ')
             options, arguments = self.getter.get(argv)
