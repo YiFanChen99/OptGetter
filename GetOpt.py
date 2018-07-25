@@ -23,6 +23,11 @@ class OptGetter(object):
         # self.kwargs = kwargs  # For extending
 
     def get(self, argv, options_in_dict=False):
+        """
+        options_in_dict:
+            False: Return options in type tuple(pair)-in-list. (orderly)
+            True : Return options in type dict. (disorder)
+        """
         super(OptGetter, self).__init__()
 
         try:
@@ -52,11 +57,9 @@ class _MyTestOptGetter(OptGetter):
 
 class _OptGetterTest(unittest.TestCase):
 
-    def setUp(self):
-        self.getter = _MyTestOptGetter()
-
-    def tearDown(self):
-        self.getter = None
+    @classmethod
+    def setUpClass(cls):
+        cls.getter = _MyTestOptGetter()
 
     def test_empty_argv(self):
         argv = []
@@ -124,6 +127,34 @@ class _OptGetterTest(unittest.TestCase):
         options, arguments = self.getter.get(argv)
         self.assertEqual([('-f', "file1.so")], options)
         self.assertEqual(["file2.so", "-o", "fuji"], arguments)
+
+
+class _OptGetterArgOptionsInDictTest(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.getter = _MyTestOptGetter()
+        cls.argv = "-f file.so -f lastF -r u eiki".split(' ')
+
+    def assertEqualCorrespondingToArg(self, **kwargs):
+        options_expected = kwargs.pop('options_expected')
+
+        options, arguments = self.getter.get(self.argv, **kwargs)
+
+        self.assertEqual(options_expected, options)
+        self.assertEqual(["u", "eiki"], arguments)
+
+    def test_arg_is_false(self):
+        options_expected = [('-f', "file.so"), ('-f', "lastF"), ('-r', "")]
+        self.assertEqualCorrespondingToArg(options_in_dict=False, options_expected=options_expected)
+
+    def test_arg_is_true(self):
+        options_expected = {'-f': "lastF", '-r': ""}
+        self.assertEqualCorrespondingToArg(options_in_dict=True, options_expected=options_expected)
+
+    def test_arg_is_default_false(self):
+        options_expected = [('-f', "file.so"), ('-f', "lastF"), ('-r', "")]
+        self.assertEqualCorrespondingToArg(options_expected=options_expected)
 
 
 if __name__ == "__main__":
